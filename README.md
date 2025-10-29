@@ -13,3 +13,9 @@ Lógica de negocio: Un cliente puede realizar una reserva de un vehículo para u
 ## Casos De Usos
 ![Casos del cliente](/imagenes/casosdeuso_v1_1.png)
 ![Casos del sistema](/imagenes/casosdeuso_v1_2.png)
+
+## Diagrama De Clases
+![Diagrama de clases](imagenes/diagramdeclase.png)
+
+## Diagrama Entidad Relación
+![Diagrama entidad relación](imagenes/diagramaER.jpg)
