@@ -9,7 +9,14 @@ Lógica de negocio: Un cliente puede realizar una reserva de un vehículo para u
 - GM16091 - Wilber Daniel García Martínez
 - SV24006 - Carlos Elias Sánchez Villalobos
 - VG24003 - Brayan Alexander Villalta Gutierrez
-
+  
 ## Casos De Usos
 ![Casos del cliente](/imagenes/casosdeuso_v1_1.png)
 ![Casos del sistema](/imagenes/casosdeuso_v1_2.png)
+
+## Tecnologias utilizadas
+Intellij IDE, Java, Spring Boot, Spring Data JPA, Maven, Lombok, Postman 
+
+## Arquitectura 
+Model, Controller, Service, Repository, DTOs
+
