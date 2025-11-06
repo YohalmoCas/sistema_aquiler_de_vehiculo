@@ -1,49 +1,45 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import gt1_p9.sistema_alquiler_de_vehiculo.dto.ClienteDTO;
+import gt1_p9.sistema_alquiler_de_vehiculo.service.ClienteService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 @RestController
-@RequestMapping("/usuarios")
+@RequestMapping("/api/clientes")
+@RequiredArgsConstructor
 public class ClienteController {
 
-    // Está linea simula la base de datos temporalmente
-    private List<String> clientesDB = new ArrayList<String>();
+    private final ClienteService clienteService;
 
-
-    @GetMapping("clientes")
-    public ResponseEntity<List<String>> getClientes(){
-        return ResponseEntity.ok(clientesDB);
-    }
-    
-
-    // Retorna el cliente especifico si existe
-    @GetMapping("/clientes/{usuario}")
-    public ResponseEntity<String> buscarCliente(@PathVariable String usuario){
-        String usr = "Cliente no encontrado";
-        for(int i=0; i<clientesDB.size(); i++){
-            if (clientesDB.get(i).equals(usuario)){
-                usr = usuario;
-                break;
-            }
-        }
-        return ResponseEntity.ok(usr);
+    @PostMapping
+    public ResponseEntity<ClienteDTO> create(@Valid @RequestBody ClienteDTO dto) {
+        ClienteDTO created = clienteService.create(dto);
+        return ResponseEntity.status(201).body(created);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(clienteService.getById(id));
+    }
 
-    // Post para registrar un cliente
-    @PostMapping("/registrar")
-    public String registrarCliente(@RequestBody String newCliente){
-        clientesDB.add(newCliente);
-        return newCliente;
+    @GetMapping
+    public ResponseEntity<List<ClienteDTO>> getAll() {
+        return ResponseEntity.ok(clienteService.getAll());
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteDTO> update(@PathVariable Long id, @Valid @RequestBody ClienteDTO dto) {
+        return ResponseEntity.ok(clienteService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        clienteService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }

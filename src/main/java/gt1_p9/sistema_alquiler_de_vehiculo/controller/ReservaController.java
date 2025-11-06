@@ -1,62 +1,46 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import gt1_p9.sistema_alquiler_de_vehiculo.dto.ReservaCreateDTO;
+import gt1_p9.sistema_alquiler_de_vehiculo.dto.ReservaDTO;
+import gt1_p9.sistema_alquiler_de_vehiculo.service.ReservaService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 @RestController
-@RequestMapping("/reservas")
+@RequestMapping("/api/reservas")
+@RequiredArgsConstructor
 public class ReservaController {
 
-    // Está linea simula la base de datos temporalmente
-    private List<String> reservasDB = new ArrayList<String>();
+    private final ReservaService reservaService;
 
-
-    // Retorna la lista de reservas
-    @GetMapping()
-    public ResponseEntity<List<String>> getReservas(){
-        return ResponseEntity.ok(reservasDB);
+    @PostMapping
+    public ResponseEntity<ReservaDTO> create(@Valid @RequestBody ReservaCreateDTO dto) {
+        ReservaDTO created = reservaService.create(dto);
+        return ResponseEntity.status(201).body(created);
     }
 
-
-    // Retorna la reserva especifica si existe
-    @GetMapping("/{usuario}")
-    public ResponseEntity<String> buscarReserva(@PathVariable String usuario){
-        String resv = "Reserva no encontrada";
-        for(int i=0; i<reservasDB.size(); i++){
-            if (reservasDB.get(i).equals(usuario)){
-                resv = usuario;
-                break;
-            }
-        }
-        return ResponseEntity.ok(resv);
+    @GetMapping("/{id}")
+    public ResponseEntity<ReservaDTO> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(reservaService.getById(id));
     }
 
-
-    // Post para crear una reserva
-    @PostMapping("/alquilar")
-    public String hacerReserva(@RequestBody String newReserva){
-        reservasDB.add(newReserva);
-        return newReserva;
+    @GetMapping
+    public ResponseEntity<List<ReservaDTO>> getAll() {
+        return ResponseEntity.ok(reservaService.getAll());
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<ReservaDTO> update(@PathVariable Long id, @Valid @RequestBody ReservaCreateDTO dto) {
+        return ResponseEntity.ok(reservaService.update(id, dto));
+    }
 
-    @DeleteMapping("{id}")
-    public void borrarReserva(@PathVariable String id){
-        for(int i=0; i<reservasDB.size(); i++){
-            if (reservasDB.get(i).equals(id)){
-                reservasDB.remove(i);
-                break;
-            }
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        reservaService.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
