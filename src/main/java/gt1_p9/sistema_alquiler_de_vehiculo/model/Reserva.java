@@ -28,7 +28,7 @@ public class Reserva {
 
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
-    private Cliente id_cliente;
+    private Long id_cliente;
 
     @ManyToOne
     @JoinColumn(name = "id_vehiculo", nullable = false)
@@ -36,19 +36,13 @@ public class Reserva {
 
     @ManyToOne
     @JoinColumn(name = "id_estado_reserva", nullable = false)
-    private EstadoReserva id_estado;
+    private Long id_estado;
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fecha_inicio;
 
-    @Column(name = "hora_inicio", nullable = false)
-    private LocalDate hora_inicio;
-
     @Column(name = "fecha_final", nullable = false)
     private LocalDate fecha_final;
-
-    @Column(name = "hora_final", nullable = false)
-    private LocalDate hora_final;
 
     @Column(name = "lugar_entrega", length = 150, nullable = false)
     private String lugar_entrega;

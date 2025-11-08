@@ -11,8 +11,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ClienteDTO {
 
-    private Long id_cliente;
-
     @NotBlank(message = "El DUI es obligatorio")
     @Size(max = 10, message = "El DUI no debe exceder los 10 caracteres")
     private String dui;
