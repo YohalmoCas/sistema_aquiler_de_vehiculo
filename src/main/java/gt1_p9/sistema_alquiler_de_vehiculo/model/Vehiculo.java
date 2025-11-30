@@ -1,7 +1,5 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -44,7 +42,7 @@ public class Vehiculo {
     private String modelo;
 
     @Column(name = "anio_fabricacion", nullable = false)
-    private LocalDate anio_fabricacion;
+    private String anio_fabricacion;
 
     @Column(length = 30)
     private String color;
