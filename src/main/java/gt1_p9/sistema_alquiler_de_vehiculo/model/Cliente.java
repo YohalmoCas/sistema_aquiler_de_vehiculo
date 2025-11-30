@@ -1,7 +1,5 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.model;
 
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -41,7 +39,7 @@ public class Cliente {
     private String direccion;
 
     @Column(name = "fecha_nacimiento")
-    private LocalDate fecha_nacimiento;
+    private String fecha_nacimiento;
 
     @Column(length = 50)
     private String nacionalidad;   

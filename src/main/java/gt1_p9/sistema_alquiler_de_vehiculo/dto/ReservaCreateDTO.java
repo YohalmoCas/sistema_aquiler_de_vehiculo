@@ -1,6 +1,5 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.dto;
 
-import java.time.LocalDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -20,10 +19,10 @@ public class ReservaCreateDTO {
     private Long id_vehiculo;
 
     @NotNull(message = "La fecha de inicio es obligatoria")
-    private LocalDate fecha_inicio;
+    private String fecha_inicio;
 
     @NotNull(message = "La fecha final es obligatoria")
-    private LocalDate fecha_final;
+    private String fecha_final;
 
     @NotBlank(message = "El lugar de entrega no puede estar vacío")
     @Size(max = 150, message = "El lugar de entrega no debe exceder los 150 caracteres")

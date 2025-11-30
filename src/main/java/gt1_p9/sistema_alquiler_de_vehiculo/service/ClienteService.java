@@ -1,28 +1,26 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 
 import gt1_p9.sistema_alquiler_de_vehiculo.dto.ClienteDTO;
 import gt1_p9.sistema_alquiler_de_vehiculo.model.Cliente;
+import gt1_p9.sistema_alquiler_de_vehiculo.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ClienteService {
-    private Long newId = 1L;
 
-    private final Map<Long, Cliente> clienteMap;
+    private final ClienteRepository clienteRepository;
 
     // Crear reserva
-    public ClienteDTO create(ClienteDTO dto){
+    public Cliente create(ClienteDTO dto){
 
         Cliente newCliente = new Cliente();
 
-        newCliente.setId_cliente(newId);
         newCliente.setDui(dto.getDui());
         newCliente.setNombre(dto.getNombre());
         newCliente.setApellido(dto.getApellido());
@@ -31,76 +29,45 @@ public class ClienteService {
         newCliente.setDireccion(dto.getDireccion());
         newCliente.setNacionalidad(dto.getNacionalidad());
 
-        clienteMap.put(newCliente.getId_cliente(), newCliente);
-
-        return dto;
+        return clienteRepository.save(newCliente);
     }
 
 
     // Buscar reserva
-    public ClienteDTO getById(Long id){
-        if (clienteMap.containsKey(id)){
-            Cliente newCliente = clienteMap.get(id);
-            ClienteDTO newClienteDTO = new ClienteDTO();
-            
-            newClienteDTO.setDui(newCliente.getDui());
-            newClienteDTO.setNombre(newCliente.getNombre());
-            newClienteDTO.setApellido(newCliente.getApellido());
-            newClienteDTO.setTelefono(newCliente.getTelefono());
-            newClienteDTO.setEmail(newCliente.getEmail());
-            newClienteDTO.setDireccion(newCliente.getDireccion());
-            newClienteDTO.setNacionalidad(newCliente.getNacionalidad());
-            return newClienteDTO;
-
-        } else{
-            return null;
-        }
+    public Cliente getById(Long id){
+        return clienteRepository.findById(id)
+            .orElseThrow(() -> new NoSuchElementException("Cliente no encontrado"));
     }
 
 
     // Lista todas las reservas
-    public List<ClienteDTO> getAll(){
-        List<ClienteDTO> newList = new ArrayList<>();
-
-        for(Long i: clienteMap.keySet()){
-            Cliente cliente = clienteMap.get(i);
-
-            newList.add(getById(cliente.getId_cliente()));
-        }
-
-        return newList;
+    public List<Cliente> getAll(){
+        return clienteRepository.findAll();
     }
 
 
     // Actualizar una reserva
-    public ClienteDTO update(Long id, ClienteDTO dto){
-        
-        if (!clienteMap.containsKey(id)){
-            return null;
-        }
+    public Cliente update(Long id, ClienteDTO dto){
 
-        Cliente oldCliente = clienteMap.get(id);
+        return clienteRepository.findById(id)
+            .map(c -> {
+                c.setDui(dto.getDui());
+                c.setNombre(dto.getNombre());
+                c.setApellido(dto.getApellido());
+                c.setTelefono(dto.getTelefono());
+                c.setEmail(dto.getEmail());
+                c.setDireccion(dto.getDireccion());
+                c.setNacionalidad(dto.getNacionalidad());
 
-        oldCliente.setDui(dto.getDui());
-        oldCliente.setNombre(dto.getNombre());
-        oldCliente.setApellido(dto.getApellido());
-        oldCliente.setTelefono(dto.getTelefono());
-        oldCliente.setEmail(dto.getEmail());
-        oldCliente.setDireccion(dto.getDireccion());
-        oldCliente.setNacionalidad(dto.getNacionalidad());
-
-        ClienteDTO newClienteDTO = getById(id);
-
-        return newClienteDTO;
+                return clienteRepository.save(c);
+            }).orElseThrow(() -> new NoSuchElementException("Cliente no encontrado"));
     }
 
 
     // Eliminar reservación
     public void delete(Long id){
-        if (!clienteMap.containsKey(id)){
-            return;
-        }
-
-        clienteMap.remove(id);
+        if (!clienteRepository.existsById(id))
+            throw new NoSuchElementException("Cliente no encontrado");
+        clienteRepository.deleteById(id);
     }
 }

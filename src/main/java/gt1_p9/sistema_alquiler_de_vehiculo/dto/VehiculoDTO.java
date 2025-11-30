@@ -4,14 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.*;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class VehiculoDTO {
 
-    private Long id_vehiculo;
+    private Long id_vehiculo = 0L;
 
     @NotNull(message = "El ID del estado del vehículo es obligatorio")
     private Long id_estado;
@@ -32,7 +31,7 @@ public class VehiculoDTO {
     private String modelo;
 
     @NotNull(message = "El año de fabricación es obligatorio")
-    private LocalDate anio_fabricacion;
+    private String anio_fabricacion;
 
     @Size(max = 30, message = "El color no debe exceder los 30 caracteres")
     private String color;

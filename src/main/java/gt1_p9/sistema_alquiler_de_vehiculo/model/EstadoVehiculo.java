@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class EstadoVehiculo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id_estado_vehiculo;
+    private Long id_estado_vehiculo;
 
     @Column(nullable = false, length = 50)
     private String descripcion;

@@ -36,7 +36,7 @@ public class Mantenimiento {
     @Column(nullable = false, length = 50)
     private String tipo;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false)
     private double costro;
 
     @Column(nullable = false, length = 50)

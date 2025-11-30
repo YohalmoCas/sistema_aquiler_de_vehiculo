@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.*;
-import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -34,7 +33,7 @@ public class ClienteDTO {
     @Size(max = 150, message = "La dirección no debe exceder los 150 caracteres")
     private String direccion;
 
-    private LocalDate fecha_nacimiento;
+    private String fecha_nacimiento;
 
     @Size(max = 50, message = "La nacionalidad no debe exceder los 50 caracteres")
     private String nacionalidad;
