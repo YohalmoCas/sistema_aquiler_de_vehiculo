@@ -1,133 +1,95 @@
 package gt1_p9.sistema_alquiler_de_vehiculo.service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import gt1_p9.sistema_alquiler_de_vehiculo.dto.ReservaCreateDTO;
-import gt1_p9.sistema_alquiler_de_vehiculo.dto.ReservaDTO;
+import gt1_p9.sistema_alquiler_de_vehiculo.model.Cliente;
+import gt1_p9.sistema_alquiler_de_vehiculo.model.EstadoReserva;
 import gt1_p9.sistema_alquiler_de_vehiculo.model.Reserva;
+import gt1_p9.sistema_alquiler_de_vehiculo.model.Vehiculo;
+import gt1_p9.sistema_alquiler_de_vehiculo.repository.ClienteRepository;
+import gt1_p9.sistema_alquiler_de_vehiculo.repository.EstadoReservaRepository;
+import gt1_p9.sistema_alquiler_de_vehiculo.repository.ReservaRepository;
+import gt1_p9.sistema_alquiler_de_vehiculo.repository.VehiculoRepository;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
 public class ReservaService {
-    private Long newId = 1L;
 
-    private final Map<Long, Reserva> reservaMap;
+    private final ReservaRepository reservaRepo;
+    private final ClienteRepository clienteRepository;
+    private final VehiculoRepository vehiculoRepository;
+    private final EstadoReservaRepository estadoReservaRepository;
 
     // Crear reserva
-    public ReservaDTO create(ReservaCreateDTO dto){
-        for(Long i: reservaMap.keySet()){
-            Reserva reserva = reservaMap.get(i);
+    public Reserva create(ReservaCreateDTO dto){
 
-            LocalDate fi1 = reserva.getFecha_inicio();
-            LocalDate fi2 = dto.getFecha_inicio();
+        Cliente cliente = clienteRepository.findById(dto.getId_cliente())
+            .orElseThrow(() -> new NoSuchElementException("Cliente no encontrado"));
 
-            if (fi1.isEqual(fi2)){
-                return null;
+        Vehiculo vehiculo = vehiculoRepository.findById(dto.getId_vehiculo())
+            .orElseThrow(() -> new NoSuchElementException("Vehículo no encontrado"));
 
-            } else if(fi1.isBefore(fi2)){
-                LocalDate ff1 = reserva.getFecha_final();
-
-                if (ff1.isBefore(fi2)){
-                    return null;
-                }
-            } else{
-                LocalDate ff2 = dto.getFecha_final();
-
-                if (fi1.isBefore(ff2)){
-                    return null;
-                }
-            }
-        }
-
-        Reserva newReserva = new Reserva();
-
-        newReserva.setId_reserva(newId);
-        newReserva.setId_cliente(dto.getId_cliente());
-        newReserva.setId_vehiculo(dto.getId_vehiculo());
-        newReserva.setId_estado(2L);
+        EstadoReserva estadoReserva = estadoReservaRepository.findById(1L)
+            .orElseThrow(() -> new NoSuchElementException("Error en el estado"));
+            
+            Reserva newReserva = new Reserva();
+            
+        newReserva.setId_cliente(cliente);
+        newReserva.setId_vehiculo(vehiculo);
+        newReserva.setId_estado(estadoReserva);
         newReserva.setFecha_inicio(dto.getFecha_inicio());
         newReserva.setFecha_final(dto.getFecha_final());
         newReserva.setLugar_entrega(dto.getLugar_entrega());
         newReserva.setPrecio_total(800);
 
-        reservaMap.put(newReserva.getId_reserva(), newReserva);
-        newId += 1;
+        return reservaRepo.save(newReserva);
+    }
 
-        ReservaDTO newReservaDTO = getById(newReserva.getId_reserva());
-
-        return newReservaDTO;
+    
+    // BUSCAR RESERVA
+    public Optional<Reserva> getPorId(Long id){
+        return Optional.ofNullable(reservaRepo.findById(id)
+            .orElseThrow(() -> new RuntimeException("Reserva no encontrada")));
     }
 
 
-    // Buscar reserva
-    public ReservaDTO getById(Long id){
-        if (reservaMap.containsKey(id)){
-            Reserva newReserva = reservaMap.get(id);
-            ReservaDTO newReservaDTO = new ReservaDTO();
-            
-            newReservaDTO.setId_cliente(newReserva.getId_cliente());
-            newReservaDTO.setId_vehiculo(newReserva.getId_vehiculo());
-            newReservaDTO.setId_estado(newReserva.getId_estado());
-            newReservaDTO.setFecha_inicio(newReserva.getFecha_inicio());
-            newReservaDTO.setFecha_final(newReserva.getFecha_final());
-            newReservaDTO.setFecha_final(newReserva.getFecha_final());
-            newReservaDTO.setLugar_entrega(newReserva.getLugar_entrega());
-            newReservaDTO.setPrecio_total(newReserva.getPrecio_total());
-            return newReservaDTO;
-
-        } else{
-            return null;
-        }
-    }
-
-
-    // Lista todas las reservas
-    public List<ReservaDTO> getAll(){
-        List<ReservaDTO> newList = new ArrayList<>();
-
-        for(Long i: reservaMap.keySet()){
-            Reserva reserva = reservaMap.get(i);
-
-            newList.add(getById(reserva.getId_reserva()));
-        }
-
-        return newList;
+    // LISTAR TODAS LAS RESERVAS
+    public List<Reserva> getAll(){
+        return reservaRepo.findAll();
     }
 
 
     // Actualizar una reserva
-    public ReservaDTO update(Long id, ReservaCreateDTO dto){
-        
-        if (!reservaMap.containsKey(id)){
-            return null;
-        }
+    public Reserva update(Long id, ReservaCreateDTO dto){
+        return reservaRepo.findById(id)
+            .map(r -> {
+                Vehiculo vehiculo = vehiculoRepository.findById(dto.getId_vehiculo())
+                    .orElseThrow(() -> new NoSuchElementException("Vehículo no encontrado"));
 
-        Reserva oldReserva = reservaMap.get(id);
+                EstadoReserva estadoReserva = estadoReservaRepository.findById(1L)
+                    .orElseThrow(() -> new NoSuchElementException("Error en el estado"));
+            
+                r.setId_vehiculo(vehiculo);
+                r.setId_estado(estadoReserva);
+                r.setFecha_inicio(dto.getFecha_inicio());
+                r.setFecha_final(dto.getFecha_final());
+                r.setLugar_entrega(dto.getLugar_entrega());
 
-        oldReserva.setId_cliente(dto.getId_cliente());
-        oldReserva.setId_vehiculo(dto.getId_vehiculo());
-        oldReserva.setFecha_inicio(dto.getFecha_inicio());
-        oldReserva.setFecha_final(dto.getFecha_final());
-        oldReserva.setLugar_entrega(dto.getLugar_entrega());
-
-        ReservaDTO newReservaDTO = getById(id);
-
-        return newReservaDTO;
+                return reservaRepo.save(r);
+            }).orElseThrow(() -> new NoSuchElementException("Reserva no encontrada"));
     }
 
 
     // Eliminar reservación
     public void delete(Long id){
-        if (!reservaMap.containsKey(id)){
-            return;
-        }
-
-        reservaMap.remove(id);
+        if (!reservaRepo.existsById(id))
+            throw new NoSuchElementException("Reserva no encontrada");
+        reservaRepo.deleteById(id);
     }
 }
