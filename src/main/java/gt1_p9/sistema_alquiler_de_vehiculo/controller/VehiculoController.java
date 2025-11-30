@@ -2,10 +2,16 @@ package gt1_p9.sistema_alquiler_de_vehiculo.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import gt1_p9.sistema_alquiler_de_vehiculo.dto.VehiculoDTO;
+import gt1_p9.sistema_alquiler_de_vehiculo.model.Vehiculo;
+import gt1_p9.sistema_alquiler_de_vehiculo.service.VehiculoService;
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,37 +19,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-@RequestMapping("/vehiculos")
+@RequestMapping("api/vehiculos")
+@RequiredArgsConstructor
 public class VehiculoController {
-
-    // Está linea simula la base de datos temporalmente
-    private List<String> vehiculosDB = new ArrayList<String>();
-
-
-    @GetMapping("vehiculos")
-    public ResponseEntity<List<String>> getVehhiculos(){
-        return ResponseEntity.ok(vehiculosDB);
+    
+    private final VehiculoService vehiculoService;
+    
+    // Retorna el vehiculo especifico si existe
+    @GetMapping("/{idVehiculo}")
+    public ResponseEntity<Vehiculo> buscarVehiculo(@PathVariable Long idVehiculo){
+        return vehiculoService.buscarVehiculo(idVehiculo)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
     }
     
 
-    // Retorna el vehiculo especifico si existe
-    @GetMapping("/vehiculos/{usuario}")
-    public ResponseEntity<String> buscarVehiculo(@PathVariable String usuario){
-        String vhc = "Vehiculo no encontrado";
-        for(int i=0; i<vehiculosDB.size(); i++){
-            if (vehiculosDB.get(i).equals(usuario)){
-                vhc = usuario;
-                break;
-            }
-        }
-        return ResponseEntity.ok(vhc);
+    //Listar
+    @GetMapping
+    public ResponseEntity<List<Vehiculo>> getVehiculos(){
+        return ResponseEntity.ok(vehiculoService.obtenerVehiculos());
+    }
+    
+
+    // Registrar un vehiculo
+    @PostMapping("/registrar")
+    public ResponseEntity<Vehiculo> registrarVehiculo(@RequestBody VehiculoDTO vehiculoRequest){
+        return ResponseEntity.ok(vehiculoService.registrarVehiculo(vehiculoRequest));
     }
 
 
-    // Post para registrar un vehiculo
-    @PostMapping("/registrar")
-    public String registrarVehiculo(@RequestBody String newVehiculo){
-        vehiculosDB.add(newVehiculo);
-        return newVehiculo;
+    //Eliminar
+    @DeleteMapping("/{idVehiculo}")
+    public ResponseEntity<String> eliminar(@PathVariable Long idVehiculo) {
+         vehiculoService.borrarVehiculo(idVehiculo);
+         return
+            ResponseEntity.ok(Map.of("message", "Vehiculo eliminado con exito", "idEliminado", idVehiculo).toString());
     }
 }
